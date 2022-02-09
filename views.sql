@@ -82,10 +82,19 @@ CREATE OR REPLACE VIEW SeminarCourses AS (
 );
 
 CREATE OR REPLACE VIEW RecommendedCourses AS (
-  SELECT student, recommendedbranch.course, passedcourses.credits
+  SELECT student, passedcourses.course, passedcourses.credits
   FROM passedcourses
   LEFT JOIN basicinformation ON passedcourses.student=basicinformation.idnr
-  LEFT JOIN recommendedbranch ON recommendedbranch.program=basicinformation.program AND recommendedbranch.branch=basicinformation.branch;
+  JOIN recommendedbranch
+  ON recommendedbranch.program=basicinformation.program
+  AND recommendedbranch.branch=basicinformation.branch
+  AND recommendedbranch.course=passedcourses.course
+);
+
+CREATE OR REPLACE VIEW RecommendedCredits AS (
+  SELECT student, SUM(credits) AS total
+  FROM recommendedcourses
+  GROUP BY student
 );
 
 CREATE OR REPLACE VIEW PathToGraduation AS (
@@ -96,12 +105,18 @@ CREATE OR REPLACE VIEW PathToGraduation AS (
     COALESCE(mathCredits.total, 0) AS mathCredits,
     COALESCE(researchCredits.total, 0) AS researchCredits,
     COALESCE(seminarCourses.total, 0) AS seminarCourses,
-    student.branch != NULL AND mandatoryLeft == 0 AND 
-    AS 'qualified'
+    basicinformation.branch IS NOT NULL
+    AND COALESCE(mandatoryLeft.total, 0) = 0
+    AND COALESCE(recommendedCredits.total, 0) >= 10
+    AND COALESCE(mathCredits.total, 0) >= 20
+    AND COALESCE(researchCredits.total, 0) >= 10
+    AND COALESCE(seminarCourses.total, 0) > 0
+    AS qualified
   FROM basicinformation
   LEFT JOIN totalCredits ON idnr=totalCredits.student
   LEFT JOIN mandatoryLeft ON idnr=mandatoryLeft.student
   LEFT JOIN mathCredits ON idnr=mathCredits.student
   LEFT JOIN researchCredits ON idnr=researchCredits.student
   LEFT JOIN seminarCourses ON idnr=seminarCourses.student
+  LEFT JOIN recommendedCredits ON idnr=recommendedCredits.student
 );
