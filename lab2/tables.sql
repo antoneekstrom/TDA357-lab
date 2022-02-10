@@ -4,17 +4,17 @@ CREATE SCHEMA public;
 CREATE TABLE Students (
   idnr CHAR(10) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
-  login VARCHAR(64) NOT NULL,
+  login VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Departments (
   name VARCHAR(64) PRIMARY KEY,
-  abbr VARCHAR(64) NOT NULL,
+  abbr VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Programs (
   name VARCHAR(64) PRIMARY KEY,
-  abbr VARCHAR(64) NOT NULL,
+  abbr VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Branches (
@@ -26,7 +26,7 @@ CREATE TABLE Branches (
 CREATE TABLE Courses (
   code CHAR(6) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
-  credits FLOAT NOT NULL CHECK (credits > 0),
+  credits FLOAT NOT NULL CHECK (credits > 0)
 );
 
 CREATE TABLE LimitedCourses (
@@ -45,18 +45,18 @@ CREATE TABLE Classified (
 );
 
 CREATE TABLE DepInProgram (
-  department VARCHAR(64) NOT NULL REFERENCES Departments
-  program VARCHAR(64) NOT NULL REFERENCES Programs
+  department VARCHAR(64) NOT NULL REFERENCES Departments,
+  program VARCHAR(64) NOT NULL REFERENCES Programs,
   PRIMARY KEY (department, program)
 );
 
 CREATE TABLE GivenBy (
-  department VARCHAR(64) NOT NULL REFERENCES Departments
+  department VARCHAR(64) NOT NULL REFERENCES Departments,
   course CHAR(6) PRIMARY KEY REFERENCES Courses
 );
 
 CREATE TABLE StudentInProgram (
-  student CHAR(10) PRIMARY KEY REFERENCES Students
+  student CHAR(10) PRIMARY KEY REFERENCES Students,
   program VARCHAR(64) NOT NULL REFERENCES Programs
 );
 
@@ -78,9 +78,9 @@ CREATE TABLE RecommendedBranch (
 
 CREATE TABLE StudentBranches (
   student VARCHAR(16) PRIMARY KEY REFERENCES Students,
-  branch VARCHAR(64) NOT NULL,
-  FOREIGN KEY (branch, program) REFERENCES Branches
+  branch VARCHAR(64) NOT NULL REFERENCES Branches(name)
 );
+
 
 CREATE TABLE MandatoryProgram (
   course CHAR(6) NOT NULL REFERENCES Courses,
@@ -105,7 +105,7 @@ CREATE TABLE WaitingList (
   student VARCHAR(16) REFERENCES Students,
   course CHAR(6) NOT NULL REFERENCES Limitedcourses,
   position TIMESTAMP NOT NULL DEFAULT(NOW()),
-  PRIMARY KEY (student, course)
+  PRIMARY KEY (student, course),
   UNIQUE(course, position)
 );
 
