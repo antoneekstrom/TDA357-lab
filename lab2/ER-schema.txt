@@ -1,0 +1,64 @@
+Department(_name_, abbr)
+    unique abbr
+
+Program(_name_, abbr)
+
+Branch(_name_, _program_)
+    program -> Program.name
+
+Course(_code_, credits)
+
+LimitedCourse(_code_, capacity)
+    code -> Course.code
+
+Student(_idnr_, name, login)
+
+Classification(_name_)
+
+Classified(_course_, _classification_)
+    course -> Course.code
+    classification -> Classification.name
+
+DepInProgram(_department_, _program_)
+    department -> Department.name
+    program -> Program.name
+
+GivenBy(department, _course_)
+    department -> Department.name
+    course -> Course.code
+
+StudentInProgram(_student_, program)
+    student -> Student.idnr
+    program -> Program.name
+
+MandatoryBranch(_course_, _branch_, _program_)
+    course -> Course.code
+    (branch, program) -> Branch.(name, program)
+
+RecommendedBranch(_course_, _branch_, _program_)
+    course -> Course.code
+    (branch, program) -> Branch.(name, program)
+
+StudentBranch(branch, _student_)
+    branch -> Branch.name
+    student -> Student.idnr
+
+MandatoryProgram(_course_, _program_)
+    course -> Course.code
+    program -> Program.name
+
+PrerequisiteCourse(_course_, _prerequisite_)
+    course -> Course.code
+    prerequisite -> Course.code
+
+Registered(_student_, _course_)
+    student -> Student.idnr
+    course -> Course.code
+
+Taken(_student_, _course_, grade)
+    student -> Student.idnr
+    course -> Course.code
+
+WaitingList(_student_, _course_, position)
+    student -> Student.idnr
+    course -> Course.code

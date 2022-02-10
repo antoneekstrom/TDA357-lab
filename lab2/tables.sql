@@ -5,16 +5,7 @@ CREATE TABLE Students (
   idnr CHAR(10) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
   login VARCHAR(64) NOT NULL,
-);
-
-CREATE TABLE Departments (
-  name VARCHAR(64) PRIMARY KEY,
-  abbr VARCHAR(64) NOT NULL,
-);
-
-CREATE TABLE Programs (
-  name VARCHAR(64) PRIMARY KEY,
-  abbr VARCHAR(64) NOT NULL,
+  program VARCHAR(64) NOT NULL 
 );
 
 CREATE TABLE Branches (
@@ -27,11 +18,19 @@ CREATE TABLE Courses (
   code CHAR(6) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
   credits FLOAT NOT NULL CHECK (credits > 0),
+  department VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE LimitedCourses (
   code CHAR(6) PRIMARY KEY REFERENCES Courses,
   capacity INT NOT NULL CHECK (capacity > 0)
+);
+
+CREATE TABLE StudentBranches (
+  student VARCHAR(16) PRIMARY KEY REFERENCES Students,
+  branch VARCHAR(64) NOT NULL,
+  program VARCHAR(64) NOT NULL,
+  FOREIGN KEY (branch, program) REFERENCES Branches
 );
 
 CREATE TABLE Classifications (
@@ -44,20 +43,10 @@ CREATE TABLE Classified (
   PRIMARY KEY (course, classification)
 );
 
-CREATE TABLE DepInProgram (
-  department VARCHAR(64) NOT NULL REFERENCES Departments
-  program VARCHAR(64) NOT NULL REFERENCES Programs
-  PRIMARY KEY (department, program)
-);
-
-CREATE TABLE GivenBy (
-  department VARCHAR(64) NOT NULL REFERENCES Departments
-  course CHAR(6) PRIMARY KEY REFERENCES Courses
-);
-
-CREATE TABLE StudentInProgram (
-  student CHAR(10) PRIMARY KEY REFERENCES Students
-  program VARCHAR(64) NOT NULL REFERENCES Programs
+CREATE TABLE MandatoryProgram (
+  course CHAR(6) NOT NULL REFERENCES Courses,
+  program VARCHAR(64) NOT NULL,
+  PRIMARY KEY (course, program)
 );
 
 CREATE TABLE MandatoryBranch (
@@ -74,18 +63,6 @@ CREATE TABLE RecommendedBranch (
   program VARCHAR(64) NOT NULL,
   FOREIGN KEY (branch, program) REFERENCES Branches,
   PRIMARY KEY (course, branch, program)
-);
-
-CREATE TABLE StudentBranches (
-  student VARCHAR(16) PRIMARY KEY REFERENCES Students,
-  branch VARCHAR(64) NOT NULL,
-  FOREIGN KEY (branch, program) REFERENCES Branches
-);
-
-CREATE TABLE MandatoryProgram (
-  course CHAR(6) NOT NULL REFERENCES Courses,
-  program VARCHAR(64) NOT NULL,
-  PRIMARY KEY (course, program)
 );
 
 CREATE TABLE Registered (
@@ -106,13 +83,4 @@ CREATE TABLE WaitingList (
   course CHAR(6) NOT NULL REFERENCES Limitedcourses,
   position TIMESTAMP NOT NULL DEFAULT(NOW()),
   PRIMARY KEY (student, course)
-  UNIQUE(course, position)
 );
-
-
-
-
-
-
-
-

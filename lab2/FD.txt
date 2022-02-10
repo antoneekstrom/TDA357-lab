@@ -1,0 +1,79 @@
+D(
+    studentIdnr,
+    studentName,
+    login,
+    branchName,
+    programName,
+    courseCode,
+    courseName,
+    credits,
+    departmentName,
+    capacity,
+    classification,
+    grade,
+    position
+)
+
+Step 2 --------------------------------------------------------------------------------------------------------------------------------------------
+
+studentIdnr -> studentName
+studentIdnr -> login
+studentIdnr -> programName
+studentIdnr -> branchName
+studentIdnr -> credits
+courseCode -> courseName
+courseCode -> departmentName
+courseCode -> capacity
+branchName -> programName
+studentIdnr courseCode -> grade
+studentIdnr courseCode -> position
+position courseCode -> studentIdnr
+
+Step 3 --------------------------------------------------------------------------------------------------------------------------------------------
+
+{ courseCode }* = { courseCode, courseName, departmentName, capacity } != S
+R1(courseCode, courseName, departmentName, capacity)
+R2(studentIdnr, studentName, login, branchName, programName, courseCode, credits, classification, grade, position)
+
+{ branchName }* = { branchName, programName } != S
+R1(courseCode, courseName, departmentName, capacity)
+R2(programName, branchName)
+R3(studentIdnr, studentName, login, branchName, courseCode, credits, classification, grade, position)
+
+{ studentIdnr }* = { studentIdnr, studentName, login, branchName, credits } != S
+R1(courseCode, courseName, departmentName, capacity)
+R2(programName, branchName)
+R3(studentIdnr, studentName, login, branchName, credits)
+R4(studentIdnr, classification, courseCode, grade, position)
+
+{ studentIdnr, courseCode }* = { studentIdnr, courseCode, grade, position } != S
+R1(courseCode, courseName, departmentName, capacity)
+R2(programName, branchName)
+R3(studentIdnr, studentName, login, branchName, credits)
+R4(studentIdnr, courseCode, grade, position)
+R5(studentIdnr, courseCode, classification)
+
+
+
+The BCNF algorithm does not consider MVDs, so the R5 table for example will contain a lot of unneccesary entries, it would be better to split it up in (studentIdnr,courseCode) and (courseCode,classification).
+It also lacks information about the domain so it will never generate tables like MandatoryBranch and RecommendedBranch since those are the exact same to the BCNF algorithm
+
+
+Step 4 --------------------------------------------------------------------------------------------------------------------------------------------
+
+courseCode ->> classification
+
+# 4NF
+
+{ courseCode }* = { courseCode, classification }
+
+X = { courseCode }
+X* = { courseCode, classification }
+Y = { classification }
+
+R1(courseCode, courseName, departmentName, capacity)
+R2(branchName, programName)
+R3(studentIdnr, studentName, login, branchName, credits)
+R4(studentIdnr, courseCode, grade, position)
+R5(courseCode, classification)
+R6(courseCode, studentIdnr)
