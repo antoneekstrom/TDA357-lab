@@ -1,8 +1,8 @@
-
 CREATE OR REPLACE VIEW BasicInformation AS (
-  SELECT idnr, name, login, students.program, branch
+  SELECT idnr, name, login, studentinprogram.program, branch
   FROM students
   LEFT JOIN studentbranches ON idnr=student
+  LEFT JOIN studentinprogram ON idnr=studentinprogram.student
 );
 
 CREATE OR REPLACE VIEW FinishedCourses AS (

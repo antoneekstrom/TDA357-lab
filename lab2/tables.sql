@@ -1,6 +1,3 @@
-DROP SCHEMA public CASCADE;
-CREATE SCHEMA public;
-
 CREATE TABLE Students (
   idnr CHAR(10) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
@@ -57,7 +54,8 @@ CREATE TABLE GivenBy (
 
 CREATE TABLE StudentInProgram (
   student CHAR(10) PRIMARY KEY REFERENCES Students,
-  program VARCHAR(64) NOT NULL REFERENCES Programs
+  program VARCHAR(64) NOT NULL REFERENCES Programs,
+  UNIQUE(student,program)
 );
 
 CREATE TABLE MandatoryBranch (
@@ -78,9 +76,11 @@ CREATE TABLE RecommendedBranch (
 
 CREATE TABLE StudentBranches (
   student VARCHAR(16) PRIMARY KEY REFERENCES Students,
-  branch VARCHAR(64) NOT NULL REFERENCES Branches(name)
+  branch VARCHAR(64) NOT NULL,
+  program VARCHAR(64) NOT NULL,
+  FOREIGN KEY (branch, program) REFERENCES Branches(name, program),
+  FOREIGN KEY (student, program) REFERENCES StudentInProgram(student,program)
 );
-
 
 CREATE TABLE MandatoryProgram (
   course CHAR(6) NOT NULL REFERENCES Courses,
