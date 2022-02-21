@@ -3,7 +3,7 @@ CREATE SCHEMA public;
 
 CREATE TABLE Departments (
   name VARCHAR(64) PRIMARY KEY,
-  abbr VARCHAR(64) NOT NULL
+  abbr VARCHAR(64) UNIQUE NOT NULL
 );
 
 CREATE TABLE Programs (
@@ -14,7 +14,7 @@ CREATE TABLE Programs (
 CREATE TABLE Students (
   idnr CHAR(10) PRIMARY KEY,
   name VARCHAR(64) NOT NULL,
-  login VARCHAR(64) NOT NULL,
+  login VARCHAR(64) UNIQUE NOT NULL,
   program VARCHAR(64) NOT NULL REFERENCES Programs,
   UNIQUE(idnr, program)
 );

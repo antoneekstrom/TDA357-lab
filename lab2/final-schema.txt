@@ -2,7 +2,6 @@ Department(_name_, abbr)
     unique abbr
 
 Program(_name_, abbr)
-    unique abbr
 
 Branch(_name_, _program_)
     program -> Program.name
