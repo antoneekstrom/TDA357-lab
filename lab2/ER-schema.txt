@@ -11,7 +11,7 @@ LimitedCourse(_code_, capacity)
     code -> Course.code
 
 Student(_idnr_, name, login, program)
-    program -> Program.name
+	program -> Program.name
 
 Classification(_name_)
 

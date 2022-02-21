@@ -37,18 +37,18 @@ R1(courseCode, courseName, departmentName, capacity, credits)
 R2(studentIdnr, studentName, login, branchName, programName, courseCode, classification, grade, position)
 
 { branchName }* = { branchName, programName } != S
-R1(courseCode, courseName, departmentName, capacity)
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
 R3(studentIdnr, studentName, login, branchName, courseCode, classification, grade, position)
 
 { studentIdnr }* = { studentIdnr, studentName, login, branchName } != S
-R1(courseCode, courseName, departmentName, capacity)
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
 R3(studentIdnr, studentName, login, branchName)
 R4(studentIdnr, classification, courseCode, grade, position)
 
 { studentIdnr, courseCode }* = { studentIdnr, courseCode, grade, position } != S
-R1(courseCode, courseName, departmentName, capacity)
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
 R3(studentIdnr, studentName, login, branchName)
 R4(studentIdnr, courseCode, grade, position)
