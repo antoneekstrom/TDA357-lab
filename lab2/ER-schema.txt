@@ -11,7 +11,8 @@ Course(_code_, name, credits)
 LimitedCourse(_code_, capacity)
     code -> Course.code
 
-Student(_idnr_, name, login)
+Student(_idnr_, name, login, program)
+	program -> Program.name
 
 Classification(_name_)
 
@@ -61,4 +62,4 @@ Taken(_student_, _course_, grade)
 
 WaitingList(_student_, _course_, position)
     student -> Student.idnr
-    course -> Course.code
+    course -> LimitedCourse.code

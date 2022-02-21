@@ -20,10 +20,10 @@ studentIdnr -> studentName
 studentIdnr -> login
 studentIdnr -> programName
 studentIdnr -> branchName
-studentIdnr -> credits
 courseCode -> courseName
 courseCode -> departmentName
 courseCode -> capacity
+courseCode -> credits
 branchName -> programName
 studentIdnr courseCode -> grade
 studentIdnr courseCode -> position
@@ -31,25 +31,25 @@ position courseCode -> studentIdnr
 
 Step 3 --------------------------------------------------------------------------------------------------------------------------------------------
 
-{ courseCode }* = { courseCode, courseName, departmentName, capacity } != S
-R1(courseCode, courseName, departmentName, capacity)
-R2(studentIdnr, studentName, login, branchName, programName, courseCode, credits, classification, grade, position)
+{ courseCode }* = { courseCode, courseName, departmentName, capacity, credits } != S
+R1(courseCode, courseName, departmentName, capacity, credits)
+R2(studentIdnr, studentName, login, branchName, programName, courseCode, classification, grade, position)
 
 { branchName }* = { branchName, programName } != S
-R1(courseCode, courseName, departmentName, capacity)
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
-R3(studentIdnr, studentName, login, branchName, courseCode, credits, classification, grade, position)
+R3(studentIdnr, studentName, login, branchName, courseCode, classification, grade, position)
 
-{ studentIdnr }* = { studentIdnr, studentName, login, branchName, credits } != S
-R1(courseCode, courseName, departmentName, capacity)
+{ studentIdnr }* = { studentIdnr, studentName, login, branchName } != S
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
-R3(studentIdnr, studentName, login, branchName, credits)
+R3(studentIdnr, studentName, login, branchName)
 R4(studentIdnr, classification, courseCode, grade, position)
 
 { studentIdnr, courseCode }* = { studentIdnr, courseCode, grade, position } != S
-R1(courseCode, courseName, departmentName, capacity)
+R1(courseCode, courseName, departmentName, capacity, credits)
 R2(programName, branchName)
-R3(studentIdnr, studentName, login, branchName, credits)
+R3(studentIdnr, studentName, login, branchName)
 R4(studentIdnr, courseCode, grade, position)
 R5(studentIdnr, courseCode, classification)
 
