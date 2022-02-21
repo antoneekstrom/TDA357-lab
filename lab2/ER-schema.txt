@@ -28,10 +28,6 @@ GivenBy(department, _course_)
     department -> Department.name
     course -> Course.code
 
-StudentInProgram(_student_, program)
-    student -> Student.idnr
-    program -> Program.name
-
 MandatoryBranch(_course_, _branch_, _program_)
     course -> Course.code
     (branch, program) -> Branch.(name, program)

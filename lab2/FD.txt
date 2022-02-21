@@ -20,6 +20,7 @@ studentIdnr -> studentName
 studentIdnr -> login
 studentIdnr -> programName
 studentIdnr -> branchName
+login -> studentIdnr
 courseCode -> courseName
 courseCode -> departmentName
 courseCode -> capacity
