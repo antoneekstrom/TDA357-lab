@@ -1,5 +1,4 @@
 Department(_name_, abbr)
-    unique abbr
 
 Program(_name_, abbr)
 
@@ -11,7 +10,8 @@ Course(_code_, name, credits)
 LimitedCourse(_code_, capacity)
     code -> Course.code
 
-Student(_idnr_, name, login)
+Student(_idnr_, name, login, program)
+    program -> Program.name
 
 Classification(_name_)
 
@@ -26,10 +26,6 @@ DepInProgram(_department_, _program_)
 GivenBy(department, _course_)
     department -> Department.name
     course -> Course.code
-
-StudentInProgram(_student_, program)
-    student -> Student.idnr
-    program -> Program.name
 
 MandatoryBranch(_course_, _branch_, _program_)
     course -> Course.code
@@ -61,4 +57,4 @@ Taken(_student_, _course_, grade)
 
 WaitingList(_student_, _course_, position)
     student -> Student.idnr
-    course -> Course.code
+    course -> LimitedCourse.code
