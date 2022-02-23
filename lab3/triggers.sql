@@ -1,5 +1,5 @@
-CREATE OR REPLACE VIEW CourseQueuePosition AS (
-  SELECT student, course, ROW_NUMBER() OVER (PARTITION BY course ORDER BY WaitingList.position) AS position
+CREATE OR REPLACE VIEW CourseQueuePositions AS (
+  SELECT course, student, ROW_NUMBER() OVER (PARTITION BY course ORDER BY WaitingList.position) AS place
   FROM waitinglist
 );
 
@@ -73,7 +73,7 @@ CREATE OR REPLACE FUNCTION on_unregister() RETURNS trigger AS $on_unregister$
       coursecount := (SELECT COUNT(*) FROM registrations WHERE course=OLD.course AND status='registered');
 
       IF coursecapacity IS NOT NULL AND coursecount < coursecapacity THEN
-        firstinqueue := (SELECT student FROM coursequeueposition WHERE position=1 AND course=OLD.course);
+        firstinqueue := (SELECT student FROM coursequeuepositions WHERE place=1 AND course=OLD.course);
 
         IF firstinqueue IS NOT NULL THEN
           DELETE FROM waitinglist WHERE student=firstinqueue AND course=OLD.course;
@@ -85,8 +85,8 @@ CREATE OR REPLACE FUNCTION on_unregister() RETURNS trigger AS $on_unregister$
   END;
 $on_unregister$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER on_register INSTEAD OF INSERT OR UPDATE ON registrations
+CREATE TRIGGER on_register INSTEAD OF INSERT OR UPDATE ON registrations
     FOR EACH ROW EXECUTE FUNCTION on_register();
 
-CREATE OR REPLACE TRIGGER on_unregister INSTEAD OF DELETE ON registrations
+CREATE TRIGGER on_unregister INSTEAD OF DELETE ON registrations
     FOR EACH ROW EXECUTE FUNCTION on_unregister();
