@@ -26,7 +26,7 @@ DELETE FROM Registrations where student = '4444444444' AND course = 'CCC555';
 -- EXPECTED OUTCOME: Pass
 DELETE FROM Registrations where student = '2222222222' AND course = 'CCC333';
 
--- TEST #8: Unregister from a limited course with waiting list while being registered.
+-- TEST #8: Unregister from a limited course with a waiting list while being registered.
 -- EXPECTED OUTCOME: Pass
 DELETE FROM Registrations where student = '1111111111' AND course = 'CCC333';
 
@@ -37,3 +37,7 @@ DELETE FROM Registrations where student = '1111111111' AND course = 'CCC222';
 -- TEST #10: Wait for limited course.
 -- EXPECTED OUTCOME: Pass
 INSERT INTO Registrations VALUES ('7777777777', 'CCC222');
+
+-- TEST #11: Try to register for a course where the prerequisites haven't been taken.
+-- EXPECTED OUTCOME: Fail
+INSERT INTO Registrations VALUES ('7777777777', 'CCC111');
