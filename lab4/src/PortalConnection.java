@@ -65,29 +65,70 @@ public class PortalConnection {
 
     // Return a JSON document containing lots of information about a student, it should validate against the schema found in information_schema.json
     public String getInfo(String student) throws SQLException {
+		
+		JSONObject obj = new JSONObject();
 
         try (PreparedStatement st = conn.prepareStatement(
-                "SELECT  FROM pathtograduation CROSS JOIN basicinformation WHERE student=?;"
+                "SELECT * FROM basicinformation JOIN pathtograduation on idnr=student WHERE idnr=?;"
         );) {
-
             st.setString(1, student);
             ResultSet rs = st.executeQuery();
 
             if (rs.next()) {
-                double totalCredits = rs.getDouble(1);
-                int mandatoryLeft = rs.getInt(2);
-                double mathCredits = rs.getDouble(3);
-                double researchCredits = rs.getDouble(4);
-                int seminarCourses = rs.getInt(5);
-                boolean qualified = rs.getBoolean(6);
-
-                JSONObject obj = new JSONObject();
-                obj.put("student", student);
-                obj.put("name")
+                obj.put("student", rs.getString(1));
+                obj.put("name", rs.getString(2));
+                obj.put("login", rs.getString(3));
+                obj.put("program", rs.getString(4));
+                obj.put("branch", rs.getString(5));
+				
+                obj.put("seminarCourses", rs.getInt(11));
+                obj.put("mathCredits", rs.getDouble(9));
+                obj.put("researchCredits", rs.getDouble(10));
+                obj.put("totalCredits", rs.getDouble(7));
+                obj.put("canGraduate", rs.getBoolean(12));
+				
             }
+			rs.close();
         }
+		
+		try (PreparedStatement st = conn.prepareStatement(
+                "SELECT name, code, courses.credits, grade FROM finishedCourses JOIN courses on course=code WHERE student=?;"
+        );) {
+            st.setString(1, student);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+				JSONObject arrObj = new JSONObject();
+                arrObj.put("course", rs.getString(1));
+                arrObj.put("code", rs.getString(2));
+                arrObj.put("credits", rs.getDouble(3));
+                arrObj.put("grade", rs.getString(4));
+				obj.append("finished",arrObj);
+            }
+			rs.close();
+        }
+		
+		try (PreparedStatement st = conn.prepareStatement(
+                "SELECT name, code, status, place from registrations JOIN courses on course=code LEFT JOIN coursequeuepositions on coursequeuepositions.course = code and registrations.student = coursequeuepositions.student WHERE registrations.student=?;"
+        );) {
+            st.setString(1, student);
+            ResultSet rs = st.executeQuery();
+            while (rs.next()) {
+				JSONObject arrObj = new JSONObject();
+                arrObj.put("course", rs.getString(1));
+                arrObj.put("code", rs.getString(2));
+				String status = rs.getString(3);
+                arrObj.put("status", status);
+				if (status.equals("waiting")){
+					arrObj.put("position",rs.getString(4));
+				}
+				obj.append("registered",arrObj);
+            }
+			rs.close();
+        }
+		
+		
 
-        return null;
+        return obj.toString();
     }
 
     // This is a hack to turn an SQLException into a JSON string error message. No need to change.
