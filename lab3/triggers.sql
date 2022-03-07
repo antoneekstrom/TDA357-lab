@@ -66,10 +66,6 @@ CREATE OR REPLACE FUNCTION on_unregister() RETURNS trigger AS $on_unregister$
     coursecount INT;
     firstinqueue VARCHAR(10);
   BEGIN
-	  IF (NOT EXISTS(SELECT * FROM registered WHERE student=OLD.student AND course=OLD.course)) THEN
-        RAISE EXCEPTION 'Not registered for the course';
-      END IF;
-	  RAISE EXCEPTION 'bla';
       DELETE FROM registered WHERE student=OLD.student AND course=OLD.course;
       DELETE FROM waitinglist WHERE student=OLD.student AND course=OLD.course;
 
@@ -89,8 +85,11 @@ CREATE OR REPLACE FUNCTION on_unregister() RETURNS trigger AS $on_unregister$
   END;
 $on_unregister$ LANGUAGE plpgsql;
 
+
 CREATE TRIGGER on_register INSTEAD OF INSERT OR UPDATE ON registrations
     FOR EACH ROW EXECUTE FUNCTION on_register();
-
+	
 CREATE TRIGGER on_unregister INSTEAD OF DELETE ON registrations
     FOR EACH ROW EXECUTE FUNCTION on_unregister();
+	
+

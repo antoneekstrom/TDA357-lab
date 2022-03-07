@@ -40,7 +40,6 @@ public class PortalConnection {
     // Register a student on a course, returns a tiny JSON document (as a String)
     public String register(String student, String courseCode) {
         try (PreparedStatement registerStudent = conn.prepareStatement("INSERT INTO registrations VALUES (?, ?);")) {
-            //conn.setAutoCommit(true);
             registerStudent.setString(1, student);
             registerStudent.setString(2, courseCode);
             registerStudent.executeUpdate();
@@ -53,8 +52,10 @@ public class PortalConnection {
     // Unregister a student from a course, returns a tiny JSON document (as a String)
     public String unregister(String student, String courseCode) {
         try (Statement st = conn.createStatement()){
-            //conn.setAutoCommit(true);
-            st.executeUpdate(String.format("DELETE FROM registrations WHERE student='%s' AND course='%s';", student, courseCode));
+            if (st.executeUpdate(String.format("DELETE FROM registrations WHERE student='%s' AND course='%s';", student, courseCode)) == 0){
+				return "{\"success\": false, \"error\": \"Not registered for the course\"}";
+			}
+			
             return "{\"success\": true}";
         } catch (SQLException e) {
             return String.format("{\"success\": false, \"error\": \"%s\"}", getError(e));
