@@ -33,7 +33,7 @@ CREATE OR REPLACE FUNCTION on_register() RETURNS trigger AS $on_register$
         RAISE EXCEPTION 'Not eligible for course';
       END IF;
 
-      IF (SELECT credits FROM passedcourses WHERE student=NEW.student AND course=NEW.course) > 0 THEN
+      IF (SELECT credits FROM passedcourses WHERE student=NEW.student AND course=NEW.course) >= 0 THEN
         RAISE EXCEPTION 'Already passed the course';
       END IF;
 
@@ -66,6 +66,10 @@ CREATE OR REPLACE FUNCTION on_unregister() RETURNS trigger AS $on_unregister$
     coursecount INT;
     firstinqueue VARCHAR(10);
   BEGIN
+	  IF (NOT EXISTS(SELECT * FROM registered WHERE student=OLD.student AND course=OLD.course)) THEN
+        RAISE EXCEPTION 'Not registered for the course';
+      END IF;
+	  RAISE EXCEPTION 'bla';
       DELETE FROM registered WHERE student=OLD.student AND course=OLD.course;
       DELETE FROM waitinglist WHERE student=OLD.student AND course=OLD.course;
 
