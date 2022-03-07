@@ -52,11 +52,9 @@ public class PortalConnection {
 
     // Unregister a student from a course, returns a tiny JSON document (as a String)
     public String unregister(String student, String courseCode) {
-        try (PreparedStatement registerStudent = conn.prepareStatement("DELETE FROM registrations WHERE student=? AND course=?;")) {
+        try {
             conn.setAutoCommit(true);
-            registerStudent.setString(1, student);
-            registerStudent.setString(2, courseCode);
-            registerStudent.executeUpdate();
+            conn.createStatement().execute(String.format("DELETE FROM registrations WHERE student='%s' AND course='%s';", student, courseCode));
             return "{\"success\": true}";
         } catch (SQLException e) {
             return String.format("{\"success\": false, \"error\": \"%s\"}", getError(e));
