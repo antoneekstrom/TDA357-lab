@@ -199,7 +199,7 @@ CREATE OR REPLACE VIEW SeminarCourses AS (
 CREATE OR REPLACE VIEW RecommendedCourses AS (
   SELECT student, passedcourses.course, passedcourses.credits
   FROM passedcourses
-  LEFT JOIN basicinformation ON passedcourses.student=basicinformation.idnr
+  JOIN basicinformation ON passedcourses.student=basicinformation.idnr
   JOIN recommendedbranch
   ON recommendedbranch.program=basicinformation.program
   AND recommendedbranch.branch=basicinformation.branch
